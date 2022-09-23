@@ -10,25 +10,46 @@ function App() {
 
   const baseUrl = 'http://localhost:4000';
 
+  {
+    /** Fetch API */
+  }
   async function fetchGuestList() {
     const response = await fetch(`${baseUrl}/guests`);
     const allGuests = await response.json();
 
-    setGuestList(allGuests.results[0]);
+    setGuestList(allGuests);
   }
 
   useEffect(() => {
     fetchGuestList().catch(() => {});
   }, []);
 
-  // const response = await fetch(`${baseUrl}/guests`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({ firstName: {firstName}, lastName: {lastName} }),
-  // });
-  // const createdGuest = await response.json();
+  {
+    /** Push Guests to API */
+  }
+  async function addGuest() {
+    const response = await fetch(`${baseUrl}/guests`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+      }),
+    });
+    fetchGuestList().catch(() => {});
+  }
+
+  {
+    /** Remove Guests from API */
+  }
+
+  async function removeGuest() {
+    const response = await fetch(`${baseUrl}/guests/1`, { method: 'DELETE' });
+    fetchGuestList().catch(() => {});
+    //  const deletedGuest = await response.json();
+  }
 
   // useEffect(() => {
   //   if (guestList) {
@@ -48,11 +69,12 @@ function App() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    this.state.newGuests.push(this.state.newGuests);
 
     setFirstName('');
     setLastName('');
   };
+
+  console.log(guestList);
 
   return (
     <div>
@@ -81,17 +103,27 @@ function App() {
             onKeyDown={handleKeyDown}
             required
           />
-          <button onClick={() => setNewGuests(`${firstName} ${lastName}`)}>
-            Submit
-          </button>
+          <button onClick={() => addGuest()}>Submit</button>
         </form>
+        {/** Call Guests */}
         <div>
-          {newGuests}
-          <input
-            checked={checkBoxValue}
-            type="checkbox"
-            onChange={(event) => setCheckBoxValue(event.currentTarget.checked)}
-          />
+          {guestList.map((guest) => {
+            return (
+              <div key={guest.id}>
+                <span>{`${guest.firstName} ${guest.lastName}`}</span>
+                <input
+                  checked={checkBoxValue}
+                  type="checkbox"
+                  onChange={(event) =>
+                    setCheckBoxValue(event.currentTarget.checked)
+                  }
+                />
+                <button aria-label="Remove" onClick={() => removeGuest()}>
+                  X
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

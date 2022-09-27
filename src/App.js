@@ -34,6 +34,12 @@ const button = css`
   color: white;
   margin-left: 20px;
   margin-bottom: 5px;
+
+  :hover {
+    box-shadow: 5px 5px 25px #22aaa1 inset;
+    transition: all 0.2s ease 0s;
+    border: 1px solid white;
+  }
 `;
 
 const names = css`
